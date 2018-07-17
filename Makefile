@@ -11,10 +11,10 @@ SSH-CA_PATH = /home/ssh-ca
 
 
 gather:
-		scp -i $(KEY) $(WATTS_USER)@$(WATTS_SERVER):$(WATTS_PATH)/main.py src/watts/src/main.py
+		scp -i $(KEY) $(WATTS_USER)@$(WATTS_SERVER):$(WATTS_PATH)/main.py src/watts/main.py
 		scp -r -i $(KEY) $(SSH-CA_USER)@$(SSH-CA_SERVER):$(SSH-CA_PATH)/* src/ssh-ca
 
 
 deploy:
-		scp -i $(KEY) src/watts/src/main.py $(WATTS_USER)@$(WATTS_SERVER):$(WATTS_PATH)/main.py
+		scp -i $(KEY) src/watts/main.py $(WATTS_USER)@$(WATTS_SERVER):$(WATTS_PATH)/main.py
 		scp -r -i $(KEY) src/ssh-ca $(SSH-CA_USER)@$(SSH-CA_SERVER):$(SSH-CA_PATH) 
