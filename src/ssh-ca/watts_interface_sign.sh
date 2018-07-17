@@ -32,8 +32,8 @@ principals=$(echo "$SSH_ORIGINAL_COMMAND" | jq -r '.principals | join(",")' )
 validity=$(echo "$SSH_ORIGINAL_COMMAND" | jq -r '.validity' )
 
 counter=$(flock -x $COUNTERFILE sh -c 'COUNTER=$(cat '$COUNTERFILE'); echo $((COUNTER+1)) | tee '$COUNTERFILE)
-keyfile=$HOME/certs/user/${counter}
-certfile=$HOME/certs/user/${counter}-cert.pub
+keyfile=${CERT_USER_DIR}${counter}
+certfile=${CERT_USER_DIR}${counter}-cert.pub
 
 echo $key > $keyfile
 ssh-keygen -s $CA_USER -I todo -n $principals -z $counter -V $validity $keyfile

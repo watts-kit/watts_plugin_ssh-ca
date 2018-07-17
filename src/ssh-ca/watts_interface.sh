@@ -7,6 +7,13 @@ CA_USER=${DATA_DIR}/keys/user_key
 CA_USER_PUB=${DATA_DIR}/keys/user_key.pub
 COUNTERFILE=${DATA_DIR}/certs/counter
 
+REVOCATION=${DATA_DIR}/certs/revocation_list
+
+CERT_USER_DIR=${DATA_DIR}/certs/user/
+
+REVOCATION_HOST=revocation
+
+
 
 echoerr() { echo "$@" 1>&2; }
 
