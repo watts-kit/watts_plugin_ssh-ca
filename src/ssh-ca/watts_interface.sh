@@ -1,9 +1,11 @@
 #!/bin/bash
 
 
-CA_USER=$HOME/user_key
-CA_USER_PUB=$HOME/user_key.pub
-COUNTERFILE=$HOME/certs/counter
+DATA_DIR=$HOME
+
+CA_USER=${DATA_DIR}/keys/user_key
+CA_USER_PUB=${DATA_DIR}/keys/user_key.pub
+COUNTERFILE=${DATA_DIR}/certs/counter
 
 
 echoerr() { echo "$@" 1>&2; }
