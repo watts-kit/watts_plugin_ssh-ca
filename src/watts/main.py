@@ -20,6 +20,13 @@ logging.basicConfig(filename='/home/watts-dev/ssh-ca.log',level=logging.DEBUG)
 VERSION="0.0.1"
 
 def list_params():
+    """ Return configuration parameters in a json string.
+    
+    Return config as expected by watts.
+    Watts config is divided into RequestParams and ConfParams.
+    ConfParams must be supplied via the watts configuration file.
+    RequestParams can be supplied by the watts web interface.
+    """
     RequestParams = [
                      [{  "key":"ssh_pub_key", 
                          "name":"SSH Public Key", 
@@ -59,6 +66,10 @@ def list_params():
     return json.dumps(Config)
 
 def perform_request(host, keyfile, user, json_request):
+    """Open a ssh connection and get ssh certificate 
+    
+    This is a helper function for request()
+    """
     with subprocess.Popen(["ssh", "%s@%s" % (host,user), "-i", "%s" % keyfile, "%s" % json_request], 
             shell = False,
             stdout = subprocess.PIPE,
@@ -73,6 +84,10 @@ def perform_request(host, keyfile, user, json_request):
 
 
 def create_json(principals, validity, key):
+    """Create a json string with ssh certificate options.
+    
+    This is a helper function for request()
+    """
     request_dict = { "principals" : principals,
             "validity" : validity,
             "key" : key,
@@ -81,6 +96,7 @@ def create_json(principals, validity, key):
     return json.JSONEncoder().encode(request_dict)
 
 def request(JObject):
+    """ Request a ssh certificate """
     Params = JObject['params']
     ConfParams = JObject['conf_params']
 
