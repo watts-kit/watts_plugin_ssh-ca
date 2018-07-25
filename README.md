@@ -1,3 +1,12 @@
+The WATTS SSH-CA Plugin
+=======================
+
+Hi.
+We wanted a simple way to access our vms via ssh.
+Deploying all keys to all vms was not an option, so we use
+ssh key certificates and automatized the process of
+creation and revocation of keys.
+
 Network Structure
 ==================
 
@@ -65,12 +74,13 @@ Note:
 2) json?
 3) Output?
 
-How the SSH Signing works
+How the SSH Signing works (manual)
 ===================================
 
 - The public key must be in ~/ssh-ca/users/${username}.pub
 - Run the command
   ssh-keygen -s ssh_ca_user -I {username}-user-key -n {principal name} -V +52W ~/ssh-ca/hosts/${username}.pub
+- This will create a certificate for the principal with a life time from of about one year (52w).  
 - Return ~/ssh-ca/users/${username}-cert.pub
 
 Note:
@@ -80,10 +90,7 @@ it is already implemented. Debian Packages are slightly too young.
 With Debian Buster this will be possible.
 
 
-TODO: Add serial counter?
-
-
-How revocation works:
+How revocation works (manual):
 ===================================
 
 - Retrieve serial from ~/ssh-ca/users/${username}-cert.pub
@@ -92,6 +99,15 @@ How revocation works:
 
 Test with:
 [testable] ssh-keygen -Q -f krl_file ~/ssh-ca/users/${username}-cert.pub
+
+
+How signing and revocation works with this plugin
+==================================================
+
+Just click on receive or revoke and the plugin will do the rest.
+We use serial numbers to revoke the certificate but the rest is basically the same as
+demonstrated above.
+
 
 Plugin Configuration
 ===================================
