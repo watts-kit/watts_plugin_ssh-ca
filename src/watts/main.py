@@ -33,6 +33,27 @@ def check_validity(validity):
         return True
     return False
 
+def check_ssh_key(ssh_key):
+    p = subprocess.run(["ssh-keygen", "-l","-f", "-"],input=ssh_key.encode(),stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    if p.returncode == 0:
+        return True
+    return False
+
+def check_principals(principals_str, groups):
+    regex = "[a-zA-Z\-_](, *[a-zA-Z\-_])*"
+
+    if re.match(regex, principals_str):
+        # the str is a comma separated list, lets check if only groups assigned groups are in it
+        for princeps in principals_str.split(','):
+            if princeps == "nogroup":
+                continue
+            if not princeps in groups:
+                return False
+        return True
+
+    return False
+
+
 def list_params():
     RequestParams = [
                      [{  "key":"ssh_pub_key", 
@@ -102,6 +123,12 @@ def request(JObject):
 
     if not check_validity(Params['validity']):
         return json.dumps({'result': 'error', "user_msg" : "The validity you entered does not match regex", "log_msg" : "Wrong validity" })
+
+    if not check_ssh_key(Params["ssh_pub_key"]):
+        return json.dumps({'result': 'error', "user_msg" : "The ssh key you entered does not seem to be an ssh key", "log_msg" : "Wrong ssh key" })
+
+    if not check_principals(Params['principals'], JObject["user_info"]["groups"]):
+        return json.dumps({'result': 'error', "user_msg" : "The principals list you entered does not fit", "log_msg" : "Wrong principals" })
 
 
     request_json = create_json(["root", "anotheruser"],Params['validity'],Params["ssh_pub_key"])
