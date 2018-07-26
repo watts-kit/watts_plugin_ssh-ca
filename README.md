@@ -7,6 +7,17 @@ Deploying all keys to all vms was not an option, so we use
 ssh key certificates and automatized the process of
 creation and revocation of keys.
 
+
+Requirements
+====================
+
+* For password keys (until the new openssh version comes out),
+passwordd (https://github.com/watts-kit/passwordd) is required.
+* SSH is required
+* watts script runs with python
+* ssh-ca runs with bash and jq (json command line processor)
+>>>>>>> add requirements and welcome message
+
 Network Structure
 ==================
 
