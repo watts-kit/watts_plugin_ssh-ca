@@ -12,6 +12,7 @@ import time
 import os
 import logging
 import subprocess
+import re
 
 
 logfile = sys.path[0] + "/ssh-ca.log" 
@@ -20,14 +21,19 @@ logging.basicConfig(filename=logfile,level=logging.DEBUG)
 
 VERSION="0.0.1"
 
+
+def check_validity(validity):
+    to_day = "[0-9]{4}(0[0-9]|1[0-2])([0-2][0-9]|3[0-1])"
+    to_ss  = "[0-9]{4}(0[0-9]|1[0-2])([0-2][0-9]|3[0-1])([0-1][0-9]|2[0-3])[0-5][0-9]([0-5][0-9])?"
+    interval = "(-[0-9]+[smhdw]?:)?\+[0-9]+[smhdw]?"
+
+    all = "(^(%s:)?%s$)|(^(%s:)?%s$)|(^%s$)" %(to_day, to_day, to_ss, to_ss, interval)
+
+    if re.match(all, validity):
+        return True
+    return False
+
 def list_params():
-    """ Return configuration parameters in a json string.
-    
-    Return config as expected by watts.
-    Watts config is divided into RequestParams and ConfParams.
-    ConfParams must be supplied via the watts configuration file.
-    RequestParams can be supplied by the watts web interface.
-    """
     RequestParams = [
                      [{  "key":"ssh_pub_key", 
                          "name":"SSH Public Key", 
@@ -67,10 +73,6 @@ def list_params():
     return json.dumps(Config)
 
 def perform_request(host, keyfile, user, json_request):
-    """Open a ssh connection and get ssh certificate 
-    
-    This is a helper function for request()
-    """
     with subprocess.Popen(["ssh", "%s@%s" % (host,user), "-i", "%s" % keyfile, "%s" % json_request], 
             shell = False,
             stdout = subprocess.PIPE,
@@ -85,10 +87,6 @@ def perform_request(host, keyfile, user, json_request):
 
 
 def create_json(principals, validity, key):
-    """Create a json string with ssh certificate options.
-    
-    This is a helper function for request()
-    """
     request_dict = { "principals" : principals,
             "validity" : validity,
             "key" : key,
@@ -97,16 +95,19 @@ def create_json(principals, validity, key):
     return json.JSONEncoder().encode(request_dict)
 
 def request(JObject):
-    """ Request a ssh certificate """
     Params = JObject['params']
     ConfParams = JObject['conf_params']
 
     logging.debug("Request params are %s" % (Params,))
 
-    request_json = create_json(["root", "anotheruser"],"+52w",Params["ssh_pub_key"])
+    if not check_validity(Params['validity']):
+        return json.dumps({'result': 'error', "user_msg" : "The validity you entered does not match regex", "log_msg" : "Wrong validity" })
+
+
+    request_json = create_json(["root", "anotheruser"],Params['validity'],Params["ssh_pub_key"])
     cert = perform_request(ConfParams["ssh_ca"], ConfParams["ssh_key"], ConfParams["ssh_user"],request_json)
 
-    return json.dumps({'result':'ok', 'credential': [ {"name" : "todo", "type": "text", "value": cert['cert'] }], 'state': cert['serial']})
+    return json.dumps({'result':'ok', 'credential': [ {"name" : "SSH Certificate", "type": "text", "value": cert['cert'] }], 'state': cert['serial']})
 
 
 def revoke(JObject):
