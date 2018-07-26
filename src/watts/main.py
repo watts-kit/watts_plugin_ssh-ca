@@ -14,8 +14,9 @@ import logging
 import subprocess
 
 
+logfile = sys.path[0] + "/ssh-ca.log" 
 
-logging.basicConfig(filename='/home/watts-dev/ssh-ca.log',level=logging.DEBUG)
+logging.basicConfig(filename=logfile,level=logging.DEBUG)
 
 VERSION="0.0.1"
 
