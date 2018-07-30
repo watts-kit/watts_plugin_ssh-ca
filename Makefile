@@ -6,7 +6,7 @@ WATTS_PATH = /home/watts/.config/watts/SSH-CA/
 
 SSH-CA_SERVER = internship-ssh-ca.data.kit.edu
 SSH-CA_USER = ssh-ca
-SSH-CA_PATH = /var/lib/ssh-ca
+SSH-CA_PATH = /var/lib/ssh-ca/ssh-ca
 
 #SSH-CA_SERVER = ssh-ca.local
 #SSH-CA_USER = root
@@ -18,7 +18,7 @@ SSH-CA_PATH = /var/lib/ssh-ca
 
 gather:
 		scp -i $(KEY) $(WATTS_USER)@$(WATTS_SERVER):$(WATTS_PATH)/main.py src/watts/main.py
-		scp -r -i $(KEY) $(SSH-CA_USER)@$(SSH-CA_SERVER):$(SSH-CA_PATH)/* src/ssh-ca
+		rsync --progress -r -e "ssh -i $(KEY)" $(SSH-CA_USER)@$(SSH-CA_SERVER):$(SSH-CA_PATH)/ src/ssh-ca
 
 
 deploy:
