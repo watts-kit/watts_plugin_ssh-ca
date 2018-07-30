@@ -131,7 +131,7 @@ def request(JObject):
         return json.dumps({'result': 'error', "user_msg" : "The principals list you entered does not fit", "log_msg" : "Wrong principals" })
 
 
-    request_json = create_json(["root", "anotheruser"],Params['validity'],Params["ssh_pub_key"])
+    request_json = create_json(Params["principals"],Params['validity'],Params["ssh_pub_key"])
     cert = perform_request(ConfParams["ssh_ca"], ConfParams["ssh_key"], ConfParams["ssh_user"],request_json)
 
     return json.dumps({'result':'ok', 'credential': [ {"name" : "SSH Certificate", "type": "text", "value": cert['cert'] }], 'state': cert['serial']})
