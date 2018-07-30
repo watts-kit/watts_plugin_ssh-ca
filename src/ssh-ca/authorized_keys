@@ -1,1 +1,1 @@
-command="/home/justkidding/git/watts-ssh-ca/src/ssh-ca/watts_interface.sh" ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIN5ngqVi+I7DQKXMP67+XryKioQqPv6jX1YEm1RZvYja justkidding@pluto
+command="/var/lib/ssh-ca/ssh-ca/watts_interface.sh" ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEKMPiFXNcnV+kw+78C1jQoPsEQVdX+gCcyPp9TacCy9 watts@watts-dev

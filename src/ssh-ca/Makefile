@@ -10,7 +10,7 @@ keys/from_watts.pub:
 keys: keys/revocation keys/user_key
 
 authorized_keys: keys/from_watts.pub
-	echo "command=\"" >> authorized_keys
+	echo "command=\"" > authorized_keys
 	pwd >> authorized_keys
 	echo "/watts_interface.sh\" " >> authorized_keys
 	cat keys/from_watts.pub >> authorized_keys

@@ -1,31 +1,17 @@
 #!/bin/bash
 
-if [ $? -ne 0 ]; then
-	echoerr "json not valid"
-	exit 1
-fi
-
-
-if [ ! -e $CA_USER ]; then
-	echoerr "no ca user key found"
-	exit 1
-fi
-
-if [ ! -e $COUNTERFILE ]; then
-	echoerr "no counterfile found"
-	exit 1
-fi
-
-
 key=$(echo "$SSH_ORIGINAL_COMMAND" | jq -r '.key')
 
-# Test if key is valid keyfile of key
-printf "%s" "$key" | ssh-keygen -l -f - &> /dev/null
 
-if [ $? -ne 0 ]; then
-	echoerr "no valid key"
-	exit 1
-fi
+ret=0
+check_ca_key $CA_USER
+ret=$(( ret + ? ))
+check_counterfile $COUNTERFILE
+ret=$(( ret + ? ))
+check_key $key
+ret=$(( ret + ? ))
+[[ $ret -gt 0 ]] && exit 1
+
 
 
 principals=$(echo "$SSH_ORIGINAL_COMMAND" | jq -r '.principals | join(",")' )
@@ -36,7 +22,7 @@ keyfile=${CERT_USER_DIR}${counter}
 certfile=${CERT_USER_DIR}${counter}-cert.pub
 
 echo $key > $keyfile
-ssh-keygen -s $CA_USER -I todo -n $principals -z $counter -V $validity $keyfile
+ssh-keygen -s $CA_USER -I "$(hostname)-serial-$counter" -n $principals -z $counter -V $validity $keyfile
 
 echo -n "{"
 echo -n '"serial" :'$counter','
