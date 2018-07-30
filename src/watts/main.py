@@ -94,7 +94,7 @@ def list_params():
     return json.dumps(Config)
 
 def perform_request(host, keyfile, user, json_request):
-    with subprocess.Popen(["ssh", "%s@%s" % (host,user), "-i", "%s" % keyfile, "%s" % json_request], 
+    with subprocess.Popen(["ssh", "%s@%s" % (user, host), "-i", "%s" % keyfile, "%s" % json_request], 
             shell = False,
             stdout = subprocess.PIPE,
             stderr = subprocess.PIPE) as ssh:
