@@ -10,12 +10,16 @@ check_counterfile $COUNTERFILE
 ret=$(( ret + ? ))
 check_key $key
 ret=$(( ret + ? ))
+
+
+validity=$(echo "$SSH_ORIGINAL_COMMAND" | jq -r '.validity' )
+check_validity $validity
+ret=$(( ret + ? ))
 [[ $ret -gt 0 ]] && exit 1
 
 
 
 principals=$(echo "$SSH_ORIGINAL_COMMAND" | jq -r '.principals | join(",")' )
-validity=$(echo "$SSH_ORIGINAL_COMMAND" | jq -r '.validity' )
 
 counter=$(flock -x $COUNTERFILE sh -c 'COUNTER=$(cat '$COUNTERFILE'); echo $((COUNTER+1)) | tee '$COUNTERFILE)
 keyfile=${CERT_USER_DIR}${counter}
