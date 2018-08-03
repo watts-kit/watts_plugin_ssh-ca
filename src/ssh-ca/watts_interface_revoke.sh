@@ -5,7 +5,7 @@ serial=$(echo "$SSH_ORIGINAL_COMMAND" | jq -r '.serial')
 echoerr $SSH_ORIGINAL_COMMAND
 
 
-if [ ! -f ${CERTS_USER_DIR}/${serial}-cert.pub ]; then
+if [ ! -f ${CERT_USER_DIR}/${serial}-cert.pub ]; then
 	echoerr "serial has no valid associated cert"
 	echo "{}"
 	exit 1
@@ -23,7 +23,7 @@ echo "serial: " $serial > $tmpfile
 # the minium serial of all certs
 echo "serial: 1-"$(( $(ls ${CERT_USER_DIR} | head -n 1) - 1 )) >> $tmpfile
 
-ssh-keygen -u -k -f ${REVOCATION}-s $CA_USER_PUB $tmpfile 1>&2
+ssh-keygen -u -k -f ${REVOCATION} -s $CA_USER_PUB $tmpfile 1>&2
 
 
 
@@ -39,11 +39,10 @@ rm $tmpfile
 
 
 # delete the cert
-rm $HOME/certs/user/${serial}*
+rm ${CERT_USER_DIR}/${serial}*
 
 # push the revocation list to a new server
-# TODO: find a securer way...
-scp -q -i revocation ${REVOCATION} root@${REVOCATION_HOST}:/var/www/html/
+scp -q -i keys/revocation ${REVOCATION} ${REVOCATION_USER}@${REVOCATION_HOST}:${REVOCATION_PATH}
 
 echo -n "{"
 echo -n '"serial" :' '"'$serial'"'

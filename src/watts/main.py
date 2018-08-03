@@ -132,6 +132,9 @@ def request(JObject):
 
 
     request_json = create_json(Params["principals"],Params['validity'],Params["ssh_pub_key"])
+
+    logging.debug("SSH Watts json is:%s" %(request_json,) )
+
     cert = perform_request(ConfParams["ssh_ca"], ConfParams["ssh_key"], ConfParams["ssh_user"],request_json)
 
     return json.dumps({'result':'ok', 'credential': [ {"name" : "SSH Certificate", "type": "text", "value": cert['cert'] }], 'state': cert['serial']})
@@ -150,7 +153,7 @@ def revoke(JObject):
     keyfile = ConfParams["ssh_key"]
 
 
-    with subprocess.Popen(["ssh", "%s@%s" % (host,user), "-i", "%s" % keyfile, "%s" % json_request], 
+    with subprocess.Popen(["ssh", "%s@%s" % (user,host), "-i", "%s" % keyfile, "%s" % json_request], 
             shell = False,
             stdout = subprocess.PIPE,
             stderr = subprocess.PIPE) as ssh:

@@ -67,6 +67,13 @@ How an Application Server is set up:
 
         HostCertificate /etc/ssh/ssh_host/ecdsa_key-cert.pub
         TrustedUserCAKeys /etc/ssh/ssh_ca_user.pub
+        RevokedKeys /etc/ssh/krl
+
+- Add the following cronjob (/etc/cron.d/revoked_ssh_ca)
+
+        * * * * * root wget --quiet -O /etc/ssh/krl http://<REVOCATION-HOST>/krl
+
+This will fetch the newest revocation list from the server every minute.
 
 
 How Watts talks with the ssh-ca

@@ -33,10 +33,10 @@ function check_counterfile {
 }
 function check_key {
 	# Test if key is valid keyfile of key
-	printf "%s" "$1" | ssh-keygen -l -f - &> /dev/null
+	printf "%s" "$1" | ssh-keygen -l -f - >&2 
 
 	if [ $? -ne 0 ]; then
-		echoerr "no valid key"
+		echoerr " $1 no valid key"
 		return 1
 	fi
 }

@@ -16,8 +16,9 @@ REVOCATION=${DATA_DIR}/certs/revocation_list
 
 CERT_USER_DIR=${DATA_DIR}/certs/user/
 
-REVOCATION_HOST=revocation
-
+REVOCATION_HOST=internship-ssh-revocation.data.kit.edu
+REVOCATION_USER=ssh-ca-revocation
+REVOCATION_PATH=/var/www/htdocs
 
 
 
@@ -32,9 +33,9 @@ SSH_VERSION=$(ssh -V 2>&1 | grep -Po '(?<=OpenSSH_)[0-9]\.[0-9]' | tr -d '.')
 action=$(echo "$SSH_ORIGINAL_COMMAND" | jq -r '.action')
 
 
-if [ $action = "sign" ]; then
+if [ "$action" = "sign" ]; then
 	source $DIR/watts_interface_sign.sh
-elif [ $action = "revoke" ]; then
+elif [ "$action" = "revoke" ]; then
 	source $DIR/watts_interface_revoke.sh
 fi
 
