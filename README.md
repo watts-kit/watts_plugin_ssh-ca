@@ -8,6 +8,12 @@ ssh key certificates and automatized the process of
 creation and revocation of keys.
 
 
+Goals
+====================
+
+* Ease login to automatically set up vms.
+* Application server set up should not require much effort, should be done automatically by configuration management.
+
 Requirements
 ====================
 
@@ -16,7 +22,6 @@ passwordd (https://github.com/watts-kit/passwordd) is required.
 * SSH is required
 * watts script runs with python
 * ssh-ca runs with bash and jq (json command line processor)
->>>>>>> add requirements and welcome message
 
 Network Structure
 ==================
