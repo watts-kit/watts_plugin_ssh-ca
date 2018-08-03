@@ -64,12 +64,12 @@ def list_params():
                      {  "key":"validity", 
                          "name":"Validity", 
                          "type":"textarea", 
-                         "description":"The requested validity", 
+                         "description":"The requested validity. If unfamiliar with ssh time dates, you could supply '+2w' for a certificate that is 2 weeks valid (from now on).", 
                          "mandatory":True},
                      {  "key":"principals", 
                          "name":"principals", 
                          "type":"textarea", 
-                         "description":"The requested principals (usernames) for the cert. Join them by comma", 
+                         "description":"The requested principals for the cert. Join them by comma. You can use 'nogroup' if you do not want any of your groups included or '*' for every group. You can only include your groups supplied by your identity provider to watts. See the info plugin for your groups.", 
                          "mandatory":True}
                      ]
                     ] 
