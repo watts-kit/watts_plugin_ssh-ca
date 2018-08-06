@@ -23,4 +23,4 @@ gather:
 
 deploy:
 		scp -i $(KEY) src/watts/main.py $(WATTS_USER)@$(WATTS_SERVER):$(WATTS_PATH)/main.py
-		scp -r -i $(KEY) src/ssh-ca $(SSH-CA_USER)@$(SSH-CA_SERVER):$(SSH-CA_PATH) 
+		rsync --progress -r -e "ssh -i $(KEY)" src/ssh-ca/ $(SSH-CA_USER)@$(SSH-CA_SERVER):$(SSH-CA_PATH)

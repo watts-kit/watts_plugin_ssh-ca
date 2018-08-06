@@ -29,10 +29,19 @@ if [[ $NEEDS_PASSWORD -gt 0 ]]
 then
 	if [[ $SSH_VERSION -lt 77 ]];
 	then
-		pw_command=$(echo '{"action":"get","key":"ssh-ca"}' | netcat 127.0.0.1 6969 | jq '.value' )
+		netcat=$(which netcat || which nc)
+		
+		pw_command=$(echo '{"action":"get","key":"ssh-ca"}' | $netcat 127.0.0.1 6969 | jq -r '.value' )
+		if [ "$pw_command" == "" ]
+		then
+			echoerr "no password for ssh key supplied"
+			exit 1
+		fi
 		# ssh keyfile is encrypted and we cannot use ssh-agent
 		ssh-keygen -s $CA_USER -P $pw_command -I "$(hostname)-serial-$counter" -n $principals -z $counter -V $validity $keyfile
 	else
+		# TODO: check if ssh-agent has the ssh key
+
 		# we can use ssh-agent
 		ssh-keygen -Us $CA_USER_PUB -I "$(hostname)-serial-$counter" -n $principals -z $counter -V $validity $keyfile
 	fi
