@@ -127,6 +127,12 @@ def request(JObject):
     if not check_ssh_key(Params["ssh_pub_key"]):
         return json.dumps({'result': 'error', "user_msg" : "The ssh key you entered does not seem to be an ssh key", "log_msg" : "Wrong ssh key" })
 
+    if Params['principals'] == '*':
+        Params['principals'] = ', '.join(str(x) for x in JObject["user_info"]["groups"])
+        # if the user has no group, add the nogroup
+        if Params['principals'] == '':
+            Params['principals'] = 'nogroup'
+
     if not check_principals(Params['principals'], JObject["user_info"]["groups"]):
         return json.dumps({'result': 'error', "user_msg" : "The principals list you entered does not fit", "log_msg" : "Wrong principals" })
 
