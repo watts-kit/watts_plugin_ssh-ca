@@ -146,7 +146,14 @@ def request(JObject):
 
     logging.debug("SSH Watts json is:%s" %(request_json,) )
 
-    cert = perform_request(ConfParams["ssh_ca"], ConfParams["ssh_key"], ConfParams["ssh_user"],request_json)
+    try:
+        cert = perform_request(ConfParams["ssh_ca"], ConfParams["ssh_key"], ConfParams["ssh_user"],request_json)
+    except json.JSONDecodeError:
+        return json.dumps({'result': 'error', "user_msg" : "There was an error at the ssh-ca", "log_msg" : "Error at ssh-ca" })
+
+    if cert['cert'] == '':
+        return json.dumps({'result': 'error', "user_msg" : "There was an error at the ssh-ca", "log_msg" : "Error at ssh-ca" })
+        
 
     return json.dumps({'result':'ok', 'credential': [ {"name" : "SSH Certificate", "type": "textfile", "value": cert['cert'], 'save_as': 'YOURKEY-cert.pub' }], 'state': cert['serial']})
 
