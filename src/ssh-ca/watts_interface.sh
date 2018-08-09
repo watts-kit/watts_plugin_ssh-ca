@@ -18,7 +18,7 @@ CERT_USER_DIR=${DATA_DIR}/certs/user/
 
 REVOCATION_HOST=internship-ssh-revocation.data.kit.edu
 REVOCATION_USER=ssh-ca-revocation
-REVOCATION_PATH=/var/www/htdocs
+REVOCATION_PATH=/var/www/htdocs/krl
 
 
 
