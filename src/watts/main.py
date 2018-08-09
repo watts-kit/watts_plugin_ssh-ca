@@ -148,7 +148,7 @@ def request(JObject):
 
     cert = perform_request(ConfParams["ssh_ca"], ConfParams["ssh_key"], ConfParams["ssh_user"],request_json)
 
-    return json.dumps({'result':'ok', 'credential': [ {"name" : "SSH Certificate", "type": "text", "value": cert['cert'] }], 'state': cert['serial']})
+    return json.dumps({'result':'ok', 'credential': [ {"name" : "SSH Certificate", "type": "textfile", "value": cert['cert'], 'save_as': 'YOURKEY-cert.pub' }], 'state': cert['serial']})
 
 
 def revoke(JObject):
