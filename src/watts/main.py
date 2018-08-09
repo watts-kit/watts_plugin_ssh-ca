@@ -40,11 +40,12 @@ def check_ssh_key(ssh_key):
     return False
 
 def check_principals(principals_str, groups):
-    regex = "[a-zA-Z\-_](, *[a-zA-Z\-_])*"
+    regex = "[a-zA-Z\-_/](,[a-zA-Z\-_/])*"
 
     if re.match(regex, principals_str):
         # the str is a comma separated list, lets check if only groups assigned groups are in it
         for princeps in principals_str.split(','):
+            princeps = princeps.strip()
             if princeps == "nogroup":
                 continue
             if not princeps in groups:
@@ -127,17 +128,21 @@ def request(JObject):
     if not check_ssh_key(Params["ssh_pub_key"]):
         return json.dumps({'result': 'error', "user_msg" : "The ssh key you entered does not seem to be an ssh key", "log_msg" : "Wrong ssh key" })
 
-    if Params['principals'] == '*':
-        Params['principals'] = ', '.join(str(x) for x in JObject["user_info"]["groups"])
+    principals = Params['principals']
+    principals = principals.replace(" ", "")
+    if principals == '*':
+        logging.debug("User requested all groups")
+        principals = ','.join(str(x) for x in JObject["user_info"]["groups"])
         # if the user has no group, add the nogroup
-        if Params['principals'] == '':
-            Params['principals'] = 'nogroup'
+        if principals == '':
+            principals = 'nogroup'
+        logging.debug('principals is now %s' % (principals, ))
 
-    if not check_principals(Params['principals'], JObject["user_info"]["groups"]):
+    if not check_principals(principals, JObject["user_info"]["groups"]):
         return json.dumps({'result': 'error', "user_msg" : "The principals list you entered does not fit", "log_msg" : "Wrong principals" })
 
 
-    request_json = create_json(Params["principals"],Params['validity'],Params["ssh_pub_key"])
+    request_json = create_json(principals,Params['validity'],Params["ssh_pub_key"])
 
     logging.debug("SSH Watts json is:%s" %(request_json,) )
 
