@@ -41,10 +41,11 @@ function check_key {
 }
 
 function check_revocation {
-  if ! ssh-keygen -Q -f "$1" "$2" 1>&2 
+  # ssh-keygen FAILS if one key was revoked
+  if ssh-keygen -Q -f "$1" "$2" 1>&2 
   then
 	  echoerr "the key was not revoked"
-	  exit 1
+	  return 1
   fi
 }
 function create_revocation {
