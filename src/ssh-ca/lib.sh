@@ -20,23 +20,40 @@ function check_validity {
 
 function check_ca_key {
 
-	if [ ! -e $1 ]; then
+	if [ ! -e "$1" ]; then
 		echoerr "no ca user key found"
 		return 1
 	fi
 }
 function check_counterfile {
-	if [ ! -e $1 ]; then
+	if [ ! -e "$1" ]; then
 		echoerr "no counterfile found"
 		return 1
 	fi
 }
 function check_key {
 	# Test if key is valid keyfile of key
-	printf "%s" "$1" | ssh-keygen -l -f - >&2 
-
-	if [ $? -ne 0 ]; then
+	if ! printf "%s" "$1" | ssh-keygen -l -f - >&2
+	then
 		echoerr " $1 no valid key"
 		return 1
 	fi
+}
+
+function check_revocation {
+  if ! ssh-keygen -Q -f "$1" "$2" 1>&2 
+  then
+	  echoerr "the key was not revoked"
+	  exit 1
+  fi
+}
+function create_revocation {
+		  tmpfile=$( mktemp )
+		  # the serial of the revoked key
+		  echo "serial: " "$1" > "$tmpfile"
+		  # the minium serial of all certs
+		  echo "serial: 1-$2" >> "$tmpfile"
+
+		  ssh-keygen -u -k -f "$3" -s "$4" "$tmpfile" 1>&2
+		  rm "$tmpfile"
 }
