@@ -1,6 +1,17 @@
 #!/bin/bash
 
+###########
+###INPUT###
+###########
+
 key=$(echo "$SSH_ORIGINAL_COMMAND" | jq -r '.key')
+principals=$(echo "$SSH_ORIGINAL_COMMAND" | jq -r '.principals' )
+validity=$(echo "$SSH_ORIGINAL_COMMAND" | jq -r '.validity' )
+
+
+############
+###CHECKS###
+############
 
 check_ca_key "$CA_USER"
 ret_ca_key=$?
@@ -8,13 +19,14 @@ check_counterfile "$COUNTERFILE"
 ret_counter=$?
 check_key "$key"
 ret_key=$?
+check_validity "$validity"
+ret_validity=$?
 
-(( ! ret_ca_key && ! ret_counter && ! ret_key )) || exit 1
+(( ! ret_ca_key && ! ret_counter && ! ret_key && ! ret_validity )) || exit 1
 
-
-
-principals=$(echo "$SSH_ORIGINAL_COMMAND" | jq -r '.principals' )
-validity=$(echo "$SSH_ORIGINAL_COMMAND" | jq -r '.validity' )
+############
+###ACTION###
+############
 
 counter=$(flock -x "$COUNTERFILE" sh -c 'COUNTER=$(cat '"$COUNTERFILE"'); echo $((COUNTER+1)) | tee '"$COUNTERFILE")
 keyfile=${CERT_USER_DIR}${counter}
@@ -47,6 +59,10 @@ then
 else 
 	ssh-keygen -s "$CA_USER" -I "$(hostname)-serial-$counter" -n "$principals" -z "$counter" -V "$validity" "$keyfile"
 fi
+
+############
+###OUTPUT###
+############
 
 echo -n "{"
 echo -n '"serial" :'"$counter"','

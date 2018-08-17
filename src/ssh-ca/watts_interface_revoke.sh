@@ -29,7 +29,7 @@ check_revocation "$REVOCATION" "${CERT_USER_DIR}${serial}-cert.pub" || exit 1
 rm "${CERT_USER_DIR}/${serial}*"
 
 # push the revocation list to a new server
-scp -q -i keys/revocation "${REVOCATION}" "${REVOCATION_USER}@${REVOCATION_HOST}:${REVOCATION_PATH}"
+scp -q -i keys/revocation "${REVOCATION}" "${REVOCATION_USER}@${REVOCATION_HOST}:${REVOCATION_PATH}" || exit 1
 
 echo -n "{"
 echo -n '"serial" : "'"$serial"'"'
