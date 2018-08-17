@@ -54,6 +54,7 @@ Use a special user for key signing, here $CA_USER
 
 Perform these initialization steps:
 
+- To do all step, use the makefile provided.
 - Create CA_USER
 - Generate two ssh keys
     - `ssh-keygen -f ssh_ca_host -t ed25519`
@@ -65,7 +66,7 @@ Perform these initialization steps:
 How an Application Server is set up:
 ===================================
 
-- Sign the host key (on ssh-ca)
+- Sign the host key (on ssh-ca) (optional)
     - `ssh-keygen -s ssh_ca_host -I ${FQDN}-host-key -h -n ${FQDN},${hostname} -V +52W ~/ssh-ca/hosts/{$FQDN}.pub`
 - Publish the host key ~/ssh-ca/hosts/${FQDN}-cert.pub
 - Add the following lines to /etc/ssh/sshd_config:
@@ -78,7 +79,15 @@ How an Application Server is set up:
 
         * * * * * root wget --quiet -O /etc/ssh/krl http://<REVOCATION-HOST>/krl
 
-This will fetch the newest revocation list from the server every minute.
+  This will fetch the newest revocation list from the server every minute.
+
+- This plugin saves the groups as principals in the certificate. You can specify which users are allowed to log in with
+  The AuthorizedPrincipalsFile. Add this line to the sshd_config:
+    
+        AuthorizedPrincipalsFile /etc/ssh/principals/%u
+        
+   Add the groups that are allowed to login as user (%u) linewise into the /etc/ssh/principals/%u.
+
 
 
 How Watts talks with the ssh-ca
