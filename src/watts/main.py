@@ -225,10 +225,12 @@ def revoke(JObject):
             stdout += line.decode()
         logging.debug(stdout)
         logging.debug("stderr %s", (ssh.stderr.readlines(),))
-        jstdout = json.loads(stdout)
-        logging.debug(jstdout)
-
-    return json.dumps({'result': 'ok'})
+        try:
+            jstdout = json.loads(stdout)
+            logging.debug(jstdout)
+            return json.dumps({'result': 'ok'})
+        except json.JSONDecodeError:
+            return json.dumps({'result': 'error'})
 
 
 def get_jobject(str_input=None):
